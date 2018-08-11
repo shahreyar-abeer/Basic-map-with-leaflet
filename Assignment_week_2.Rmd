@@ -1,0 +1,55 @@
+---
+title: "Number of crimes in different thanas of Dhaka city."
+author: "Zauad Shahreer Abeer"
+date: "11 August 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+```{r}
+library(leaflet)
+
+data = read.csv("./crime_data_assignment_2.csv")
+data$crime_rate[data$thana == "Airport"] = round(17*100/5079,2)
+data = data[order(data$total_crimes, decreasing = T),]
+
+pal = colorNumeric("viridis", domain = data$total_crimes,
+                   reverse = F)
+
+data %>% 
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(lng = ~lon, lat = ~lat,
+                   color = ~pal(total_crimes), weight = 5, 
+                   radius = ~sqrt(total_crimes),
+                   popup = ~paste(thana, ", total crimes:", total_crimes,
+                                  ", crime rate:", crime_rate),
+                   opacity = 1, fillOpacity = T,
+                   fillColor = ~pal(total_crimes),
+                   label = ~paste(thana, ":", total_crimes, "crimes")) %>%
+  addLegend(labels = ~thana, colors = ~pal(total_crimes))
+```
+
+The higest number of crimes is observed in *Gulshan (152)*, followed by *Mohammadpur (98)*. 3rd,  4th and 5th in the list are respectively *Tejgaon (86), Dhanmondi (75) and Khilgaon (72)*.  
+
+Among the top 5, *Gulshan, Dhanmondi and Mohammadpur* are thought to be *well-developed*. Whether crime is related to the degree of development is a reasearch topic in itself, beyond the scope of this *mini* visualization.
+
+This work is motivated by [1](1)
+
+***
+
+**Reference:**
+
+1. [Chowdhury, U., "Spatial Distribution of Street Crime Occurrences in Dhaka City", The AUST Journal of Science and Technology, Vol. 3 Num 2, July 2011](www.aust.edu/publication/articles/v3i2art2.pdf)
+
+
+***
+
+
